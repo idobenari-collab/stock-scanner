@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ido's Stock Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f9f9f7;
+    --white: #ffffff;
+    --border: #e8e8e4;
+    --border2: #d4d4ce;
+    --text: #1a1a1a;
+    --text2: #888880;
+    --text3: #b0b0a8;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --gold: #d97706;
+    --gold-bg: #fffbeb;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    --shadow-focus: 0 0 0 3px rgba(79,70,229,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 80px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 80px 0 56px;
+    transition: padding 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  header.compact { padding: 36px 0 28px; }
+
+  .logo {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .logo span { color: var(--accent); }
+
+  .tagline {
+    font-size: 0.9rem;
+    color: var(--text2);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  header.compact .tagline { display: none; }
+
+  /* ── Search ── */
+  .search-wrap { position: relative; }
+
+  .search-input {
+    width: 100%;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 22px;
+    font-size: 1.05rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 500;
+    color: var(--text);
+    outline: none;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input::placeholder {
+    color: var(--text3);
+    font-weight: 400;
+  }
+  .search-input:focus {
+    border-color: var(--accent);
+    box-shadow: var(--shadow), var(--shadow-focus);
+  }
+
+  .search-hint {
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.8rem;
+    margin-top: 10px;
+  }
+
+  .file-status {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-top: 8px;
+  }
+  .file-status b { color: var(--accent); font-weight: 600; }
+
+  /* ── Loading ── */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 48px 0;
+    color: var(--text2);
+    font-size: 0.9rem;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Empty ── */
+  .empty-state {
+    display: none;
+    text-align: center;
+    padding: 56px 0;
+    color: var(--text2);
+  }
+  .empty-icon { font-size: 2.4rem; margin-bottom: 12px; opacity: 0.5; }
+  .empty-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 0.85rem; }
+
+  /* ── Result ── */
+  .result {
+    margin-top: 28px;
+    display: none;
+    animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Card */
+  .card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  /* Card header */
+  .card-top {
+    padding: 24px 28px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .ticker-sym {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .company-name {
+    font-size: 0.9rem;
+    color: var(--text2);
+    margin-top: 5px;
+    font-weight: 400;
+  }
+  .sector-pill {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-light);
+    border-radius: 20px;
+    padding: 3px 10px;
+    letter-spacing: 0.01em;
+  }
+
+  .price-block { text-align: left; flex-shrink: 0; }
+  .price-val {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .price-label {
+    font-size: 0.75rem;
+    color: var(--text2);
+    margin-top: 5px;
+    text-align: left;
+  }
+
+  /* Score */
+  .score-bar {
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .score-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .dots { display: flex; gap: 6px; flex: 1; }
+  .dot {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .dot.on { background: var(--accent); }
+  .dot.on.hi { background: var(--green); }
+  .score-num {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* Sections */
+  .section-head {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 16px 28px 6px;
+  }
+
+  .mrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 28px;
+    transition: background 0.12s;
+  }
+  .mrow:hover { background: var(--bg); }
+
+  .mlabel {
+    font-size: 0.88rem;
+    color: var(--text2);
+    font-weight: 400;
+  }
+
+  .mval {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    background: none;
+    border-radius: 8px;
+    padding: 3px 10px;
+  }
+  .mval.pos { color: var(--green); background: var(--green-bg); }
+  .mval.neg { color: var(--red);   background: var(--red-bg); }
+  .mval.gold{ color: var(--gold);  background: var(--gold-bg); }
+  .mval.na  { color: var(--text3); font-weight: 400; background: none; padding: 3px 0; }
+
+  .divider { height: 1px; background: var(--border); margin: 4px 28px; }
+
+  .earnings-val {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .scanned-at {
+    text-align: center;
+    font-size: 0.74rem;
+    color: var(--text3);
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header id="hdr">
+    <div class="logo">Ido's <span>Stock Scanner</span></div>
+    <div class="tagline">נתוני S&amp;P 500 · מעודכן שבועית</div>
+  </header>
+
+  <div class="search-wrap">
+    <input class="search-input" id="inp" type="text"
+      placeholder="חפש טיקר — AAPL, MSFT, NVDA..."
+      autocomplete="off" spellcheck="false" />
+  </div>
+  <div class="search-hint">לחץ Enter לחיפוש</div>
+  <div class="file-status" id="fst"></div>
+
+  <div class="loading" id="ld"><div class="spinner"></div>מחפש...</div>
+  <div class="result"  id="res"></div>
+  <div class="empty-state" id="emp">
+    <div class="empty-icon">🔍</div>
+    <div class="empty-title">לא נמצאה מניה</div>
+    <div class="empty-sub">בדוק שהטיקר נכון — לדוגמה AAPL, GOOGL, TSLA</div>
+  </div>
+
+</div>
+<script>
+var db = {};
+
+fetch('sp500_snapshot.json')
+  .then(function(r){ if(!r.ok) throw 1; return r.json(); })
+  .then(function(arr){
+    arr.forEach(function(r){ db[r.ticker.toUpperCase()] = r; });
+    var last = arr[0] && arr[0].scanned_at ? arr[0].scanned_at.slice(0,10) : '';
+    document.getElementById('fst').innerHTML =
+      'נטענו <b>' + arr.length + '</b> מניות' +
+      (last ? ' · עודכן: <b>' + last + '</b>' : '');
+  })
+  .catch(function(){
+    document.getElementById('fst').innerHTML =
+      '⚠️ לא נמצא קובץ נתונים — הרץ תחילה <b>scan_sp500_final.py</b>';
+  });
+
+document.getElementById('inp').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') go();
+});
+
+function go(){
+  var q = document.getElementById('inp').value.trim().toUpperCase();
+  if(!q) return;
+  hide('res'); hide('emp');
+  show('ld');
+  document.getElementById('hdr').classList.add('compact');
+  setTimeout(function(){
+    hide('ld');
+    var s = db[q];
+    if(s) render(s); else show('emp');
+  }, 320);
+}
+
+function show(id){ document.getElementById(id).style.display = 'block'; }
+function hide(id){ document.getElementById(id).style.display = 'none'; }
+
+function fp(v, d){
+  d = d||1;
+  if(v===null||v===undefined||v===''||isNaN(parseFloat(v))) return null;
+  var n = parseFloat(v);
+  return (n>=0?'+':'')+n.toFixed(d)+'%';
+}
+function fn(v, suf, d){
+  suf = suf||''; d = d!==undefined?d:1;
+  if(v===null||v===undefined||v===''||isNaN(parseFloat(v))) return null;
+  return parseFloat(v).toFixed(d)+suf;
+}
+function pc(v, inv){
+  if(v===null||v===undefined||isNaN(parseFloat(v))) return 'na';
+  var n = parseFloat(v);
+  if(inv) return n<=-20?'pos':n<0?'gold':'neg';
+  return n>0?'pos':n<0?'neg':'na';
+}
+
+function mrow(label, val, cls){
+  var disp = val!==null&&val!==undefined
+    ? '<span class="mval '+(cls||'')+'">'+val+'</span>'
+    : '<span class="mval na">—</span>';
+  return '<div class="mrow"><span class="mlabel">'+label+'</span>'+disp+'</div>';
+}
+
+function render(s){
+  var score = parseInt(s.score)||0;
+  var dots = '';
+  for(var i=0;i<5;i++){
+    var on=i<score, hi=on&&score>=4;
+    dots+='<div class="dot'+(on?' on':'')+(hi?' hi':'')+'"></div>';
+  }
+
+  var price = s.current_price ? '$'+parseFloat(s.current_price).toFixed(2) : '—';
+
+  var html =
+    '<div class="card">' +
+      '<div class="card-top">' +
+        '<div>' +
+          '<div class="ticker-sym">'+s.ticker+'</div>' +
+          '<div class="company-name">'+(s.company||'')+'</div>' +
+          '<span class="sector-pill">'+(s.sector||'')+'</span>' +
+        '</div>' +
+        '<div class="price-block">' +
+          '<div class="price-val">'+price+'</div>' +
+          '<div class="price-label">מחיר נוכחי</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="score-bar">' +
+        '<span class="score-label">ציון</span>' +
+        '<div class="dots">'+dots+'</div>' +
+        '<span class="score-num">'+score+' / 5</span>' +
+      '</div>' +
+
+      '<div class="section-head">צמיחה ותשואות</div>' +
+      mrow('צמיחת הכנסות 5Y',      fp(s.revenue_growth_5y_pct), pc(s.revenue_growth_5y_pct)) +
+      mrow('צמיחת רווח 5Y',        fp(s.profit_growth_5y_pct),  pc(s.profit_growth_5y_pct)) +
+      mrow('תשואה כוללת 5Y',       fp(s.total_return_5y_pct),   pc(s.total_return_5y_pct)) +
+      mrow('תשואה כוללת 1Y',       fp(s.total_return_1y_pct),   pc(s.total_return_1y_pct)) +
+      mrow('מרחק מהשיא (52W)',      fp(s.distance_from_ath_pct), pc(s.distance_from_ath_pct,true)) +
+
+      '<div class="divider"></div>' +
+      '<div class="section-head">שווי</div>' +
+      mrow('Trailing P/E', fn(s.trailing_pe,'',1), '') +
+      mrow('Forward P/E',  fn(s.forward_pe,'',1),  '') +
+
+      '<div class="divider"></div>' +
+      '<div class="section-head">דיבידנד</div>' +
+      mrow('תשואת דיבידנד', fn(s.dividend_yield_pct,'%',2), parseFloat(s.dividend_yield_pct)>=2?'pos':'') +
+      mrow('Payout Ratio',  fn(s.payout_ratio_pct,'%',1),   '') +
+
+      (s.next_earnings_date ?
+        '<div class="divider"></div>' +
+        '<div class="mrow"><span class="mlabel">תאריך דוח הבא</span>' +
+        '<span class="earnings-val">'+s.next_earnings_date+'</span></div>'
+        : '') +
+
+    '</div>' +
+    '<div class="scanned-at">נתונים מתאריך '+( s.scanned_at||'לא ידוע')+'</div>';
+
+  var el = document.getElementById('res');
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
