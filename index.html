@@ -74,6 +74,23 @@
   .top10-1y.neg { color: var(--red); }
   .top10-1y.na { color: var(--text3); }
 
+  /* ── Weekly changes ── */
+  .weekly-wrap { margin-top: 20px; animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .weekly-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 500px) { .weekly-cols { grid-template-columns: 1fr; } }
+  .weekly-col {}
+  .weekly-title { font-size: 0.72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; padding-right: 4px; }
+  .weekly-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+  .weekly-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.12s; gap: 8px; }
+  .weekly-row:last-child { border-bottom: none; }
+  .weekly-row:hover { background: var(--accent-light); }
+  .weekly-ticker { font-size: 0.88rem; font-weight: 700; color: var(--accent); min-width: 48px; }
+  .weekly-company { font-size: 0.76rem; color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .weekly-change { font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+  .weekly-change.up { color: var(--green); }
+  .weekly-change.down { color: var(--red); }
+  .weekly-empty { padding: 18px 16px; font-size: 0.82rem; color: var(--text3); text-align: center; }
+
   /* ── Loading ── */
   .loading { display: none; text-align: center; padding: 48px 0; color: var(--text2); font-size: 0.9rem; }
   .spinner { width: 28px; height: 28px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 14px; }
@@ -212,6 +229,20 @@
     <div class="top10-card" id="top10List"></div>
   </div>
 
+  <!-- Weekly changes -->
+  <div class="weekly-wrap" id="weeklyWrap" style="display:none">
+    <div class="weekly-cols">
+      <div class="weekly-col">
+        <div class="weekly-title">📈 עלו בציון</div>
+        <div class="weekly-card" id="weeklyUp"></div>
+      </div>
+      <div class="weekly-col">
+        <div class="weekly-title">📉 ירדו בציון</div>
+        <div class="weekly-card" id="weeklyDown"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="loading" id="ld"><div class="spinner"></div>מחפש...</div>
   <div class="empty-state" id="emp">
     <div class="empty-icon">🔍</div>
@@ -283,10 +314,56 @@ fetch('sp500_snapshot.json')
       'נטענו <b>' + arr.length + '</b> מניות' +
       (last ? ' · עודכן: <b>' + last + '</b>' : '');
     renderTop10(arr);
+    // load previous snapshot for weekly diff
+    fetch('sp500_snapshot_prev.json')
+      .then(function(r2){ if(!r2.ok) throw 1; return r2.json(); })
+      .then(function(prev){ renderWeekly(arr, prev); })
+      .catch(function(){ /* no prev file yet, skip */ });
   })
   .catch(function(){
     document.getElementById('fst').innerHTML = '⚠️ לא נמצא קובץ נתונים — הרץ תחילה <b>scan_sp500_final.py</b>';
   });
+
+// ── Weekly changes ──
+function renderWeekly(curr, prev) {
+  var prevMap = {};
+  prev.forEach(function(r){ prevMap[r.ticker.toUpperCase()] = parseInt(r.score)||0; });
+
+  var up = [], down = [];
+  curr.forEach(function(r){
+    var t = r.ticker.toUpperCase();
+    if(!(t in prevMap)) return;
+    var delta = (parseInt(r.score)||0) - prevMap[t];
+    if(delta > 0) up.push({ s: r, delta: delta });
+    else if(delta < 0) down.push({ s: r, delta: delta });
+  });
+
+  up.sort(function(a,b){ return b.delta - a.delta; });
+  down.sort(function(a,b){ return a.delta - b.delta; });
+
+  function rows(list, cls) {
+    if(!list.length) return '<div class="weekly-empty">אין שינויים</div>';
+    return list.slice(0,5).map(function(item){
+      var sign = item.delta > 0 ? '+' : '';
+      return '<div class="weekly-row" data-ticker="'+item.s.ticker+'">'+
+        '<span class="weekly-ticker">'+item.s.ticker+'</span>'+
+        '<span class="weekly-company">'+(item.s.company||'')+'</span>'+
+        '<span class="weekly-change '+cls+'">'+sign+item.delta+' נק׳</span>'+
+      '</div>';
+    }).join('');
+  }
+
+  document.getElementById('weeklyUp').innerHTML = rows(up, 'up');
+  document.getElementById('weeklyDown').innerHTML = rows(down, 'down');
+  document.getElementById('weeklyWrap').style.display = 'block';
+
+  document.querySelectorAll('.weekly-row').forEach(function(el){
+    el.addEventListener('click', function(){
+      document.getElementById('inp').value = el.getAttribute('data-ticker');
+      go();
+    });
+  });
+}
 
 // ── Top 10 ──
 function renderTop10(arr) {
@@ -337,6 +414,8 @@ function resetAll(){
   closeAC(); closeAC2();
   document.getElementById('hdr').classList.remove('compact');
   document.getElementById('top10Wrap').style.display = 'block';
+  if(document.getElementById('weeklyWrap').style.display !== 'none')
+    document.getElementById('weeklyWrap').style.display = 'block';
   currentTicker1 = null;
 }
 
@@ -423,7 +502,7 @@ function go(){
   hide('compareSearchWrap');
   document.getElementById('compareLayout').classList.remove('active');
   document.getElementById('compareBtn').style.display = 'none';
-  hide('emp'); hide('top10Wrap');
+  hide('emp'); hide('top10Wrap'); hide('weeklyWrap');
   show('ld');
   document.getElementById('hdr').classList.add('compact');
   setTimeout(function(){
