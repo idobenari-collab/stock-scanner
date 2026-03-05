@@ -25,16 +25,7 @@
     --shadow-focus: 0 0 0 3px rgba(79,70,229,0.15);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 20px 80px;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0 20px 80px; }
   .container { width: 100%; max-width: 680px; }
 
   /* ── Header ── */
@@ -48,22 +39,12 @@
 
   /* ── Search ── */
   .search-wrap { position: relative; }
-  .search-input {
-    width: 100%; background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 14px; padding: 16px 22px; font-size: 1.05rem;
-    font-family: 'Nunito', sans-serif; font-weight: 500; color: var(--text);
-    outline: none; box-shadow: var(--shadow); transition: border-color 0.2s, box-shadow 0.2s;
-  }
+  .search-input { width: 100%; background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 22px; font-size: 1.05rem; font-family: 'Nunito', sans-serif; font-weight: 500; color: var(--text); outline: none; box-shadow: var(--shadow); transition: border-color 0.2s, box-shadow 0.2s; }
   .search-input::placeholder { color: var(--text3); font-weight: 400; }
   .search-input:focus { border-color: var(--accent); box-shadow: var(--shadow), var(--shadow-focus); }
 
   /* ── Autocomplete ── */
-  .autocomplete-list {
-    position: absolute; top: calc(100% + 6px); right: 0; left: 0;
-    background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-    z-index: 100; overflow: hidden; display: none;
-  }
+  .autocomplete-list { position: absolute; top: calc(100% + 6px); right: 0; left: 0; background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.10); z-index: 100; overflow: hidden; display: none; }
   .ac-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; cursor: pointer; transition: background 0.12s; gap: 12px; }
   .ac-item:hover, .ac-item.active { background: var(--accent-light); }
   .ac-ticker { font-weight: 700; font-size: 0.95rem; color: var(--accent); min-width: 60px; }
@@ -75,35 +56,13 @@
   .file-status b { color: var(--accent); font-weight: 600; }
 
   /* ── Top 10 ── */
-  .top10-wrap {
-    margin-top: 32px;
-    animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
-  }
-  .top10-title {
-    font-size: 0.72rem; font-weight: 700; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.1em;
-    margin-bottom: 10px; padding-right: 4px;
-  }
-  .top10-card {
-    background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 16px; box-shadow: var(--shadow); overflow: hidden;
-  }
-  .top10-row {
-    display: grid;
-    grid-template-columns: 28px 70px 1fr auto auto;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.12s;
-  }
+  .top10-wrap { margin-top: 32px; animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .top10-title { font-size: 0.72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; padding-right: 4px; }
+  .top10-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+  .top10-row { display: grid; grid-template-columns: 28px 70px 1fr auto auto; align-items: center; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.12s; }
   .top10-row:last-child { border-bottom: none; }
   .top10-row:hover { background: var(--accent-light); }
   .top10-rank { font-size: 0.78rem; font-weight: 700; color: var(--text3); text-align: center; }
-  .top10-rank.gold-rank { color: #d97706; }
-  .top10-rank.silver-rank { color: #6b7280; }
-  .top10-rank.bronze-rank { color: #92400e; }
   .top10-ticker { font-size: 0.95rem; font-weight: 700; color: var(--accent); }
   .top10-company { font-size: 0.82rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .top10-score { display: flex; gap: 3px; justify-content: flex-end; }
@@ -130,43 +89,94 @@
   .result { margin-top: 28px; display: none; animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1); }
   @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
 
-  .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 12px; }
-  .card-top { padding: 24px 28px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); gap: 16px; }
-  .ticker-sym { font-size: 1.8rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; line-height: 1; }
-  .company-name { font-size: 0.9rem; color: var(--text2); margin-top: 5px; font-weight: 400; }
-  .sector-pill { display: inline-block; margin-top: 10px; font-size: 0.72rem; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 20px; padding: 3px 10px; }
-  .price-block { text-align: left; flex-shrink: 0; }
-  .price-val { font-size: 1.8rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
-  .price-label { font-size: 0.75rem; color: var(--text2); margin-top: 5px; text-align: left; }
+  /* ── Compare button ── */
+  .compare-btn {
+    display: none;
+    margin: 0 auto 0;
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    gap: 6px;
+    align-items: center;
+  }
+  .compare-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
-  .score-bar { padding: 16px 28px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); background: var(--bg); cursor: pointer; user-select: none; transition: background 0.15s; }
+  /* ── Compare search ── */
+  .compare-search-wrap {
+    display: none;
+    margin-top: 16px;
+    animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .compare-search-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  /* ── Compare layout ── */
+  .compare-layout {
+    display: none;
+    margin-top: 28px;
+    gap: 16px;
+    animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .compare-layout.active { display: grid; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 600px) { .compare-layout.active { grid-template-columns: 1fr; } }
+
+  .compare-col { min-width: 0; }
+  .compare-col-label {
+    font-size: 0.72rem; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 8px; padding-right: 4px;
+  }
+
+  /* ── Card ── */
+  .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 12px; }
+  .card-top { padding: 20px 20px 16px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); gap: 10px; }
+  .ticker-sym { font-size: 1.5rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; line-height: 1; }
+  .company-name { font-size: 0.82rem; color: var(--text2); margin-top: 4px; font-weight: 400; }
+  .sector-pill { display: inline-block; margin-top: 8px; font-size: 0.68rem; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 20px; padding: 2px 8px; }
+  .price-block { text-align: left; flex-shrink: 0; }
+  .price-val { font-size: 1.5rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
+  .price-label { font-size: 0.7rem; color: var(--text2); margin-top: 4px; text-align: left; }
+
+  .score-bar { padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); background: var(--bg); cursor: pointer; user-select: none; transition: background 0.15s; }
   .score-bar:hover { background: var(--accent-light); }
-  .score-label { font-size: 0.78rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
-  .score-info-icon { font-size: 0.85rem; color: var(--accent); margin-right: 4px; opacity: 0.7; }
-  .dots { display: flex; gap: 6px; flex: 1; }
-  .dot { flex: 1; height: 6px; border-radius: 3px; background: var(--border); transition: background 0.3s; }
+  .score-label { font-size: 0.72rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .score-info-icon { font-size: 0.8rem; color: var(--accent); margin-right: 3px; opacity: 0.7; }
+  .dots { display: flex; gap: 5px; flex: 1; }
+  .dot { flex: 1; height: 5px; border-radius: 3px; background: var(--border); transition: background 0.3s; }
   .dot.on { background: var(--accent); }
   .dot.on.hi { background: var(--green); }
-  .score-num { font-size: 0.95rem; font-weight: 700; color: var(--text); white-space: nowrap; }
+  .score-num { font-size: 0.88rem; font-weight: 700; color: var(--text); white-space: nowrap; }
 
-  .section-head { font-size: 0.72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; padding: 16px 28px 6px; }
-  .mrow { display: flex; align-items: center; justify-content: space-between; padding: 11px 28px; transition: background 0.12s; }
+  .section-head { font-size: 0.68rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 20px 4px; }
+  .mrow { display: flex; align-items: center; justify-content: space-between; padding: 9px 20px; transition: background 0.12s; gap: 8px; }
   .mrow:hover { background: var(--bg); }
-  .mlabel { font-size: 0.88rem; color: var(--text2); font-weight: 400; }
-  .mval { font-size: 0.9rem; font-weight: 600; color: var(--text); background: none; border-radius: 8px; padding: 3px 10px; }
+  .mlabel { font-size: 0.82rem; color: var(--text2); font-weight: 400; flex-shrink: 0; }
+  .mval { font-size: 0.84rem; font-weight: 600; color: var(--text); background: none; border-radius: 7px; padding: 2px 8px; white-space: nowrap; }
   .mval.pos { color: var(--green); background: var(--green-bg); }
   .mval.neg { color: var(--red); background: var(--red-bg); }
   .mval.gold { color: var(--gold); background: var(--gold-bg); }
-  .mval.na { color: var(--text3); font-weight: 400; background: none; padding: 3px 0; }
-  .divider { height: 1px; background: var(--border); margin: 4px 28px; }
-  .earnings-val { font-size: 0.88rem; font-weight: 600; color: var(--accent); }
-  .scanned-at { text-align: center; font-size: 0.74rem; color: var(--text3); margin-top: 10px; }
+  .mval.na { color: var(--text3); font-weight: 400; background: none; padding: 2px 0; }
+  .divider { height: 1px; background: var(--border); margin: 4px 20px; }
+  .earnings-val { font-size: 0.82rem; font-weight: 600; color: var(--accent); }
+  .scanned-at { text-align: center; font-size: 0.72rem; color: var(--text3); margin-top: 8px; margin-bottom: 4px; }
 
   /* ── Score Modal ── */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; animation: fadein 0.2s; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  @keyframes fadein { from { opacity:0; } to { opacity:1; } }
-  .modal { background: var(--white); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.18); padding: 32px 28px 24px; max-width: 460px; width: 90%; animation: slideUp 0.25s cubic-bezier(0.4,0,0.2,1); position: relative; }
+  .modal { background: var(--white); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.18); padding: 32px 28px 24px; max-width: 460px; width: 90%; position: relative; animation: slideUp 0.25s cubic-bezier(0.4,0,0.2,1); }
   @keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
   .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
   .modal-sub { font-size: 0.82rem; color: var(--text2); margin-bottom: 20px; }
@@ -203,11 +213,39 @@
   </div>
 
   <div class="loading" id="ld"><div class="spinner"></div>מחפש...</div>
-  <div class="result" id="res"></div>
   <div class="empty-state" id="emp">
     <div class="empty-icon">🔍</div>
     <div class="empty-title">לא נמצאה מניה</div>
     <div class="empty-sub">בדוק שהטיקר נכון — לדוגמה AAPL, GOOGL, TSLA</div>
+  </div>
+
+  <!-- Single result -->
+  <div class="result" id="res"></div>
+
+  <!-- Compare button (appears after single result) -->
+  <button class="compare-btn" id="compareBtn">⇄ &nbsp;השווה למניה אחרת</button>
+
+  <!-- Compare second search -->
+  <div class="compare-search-wrap" id="compareSearchWrap">
+    <div class="compare-search-label">בחר מניה להשוואה</div>
+    <div class="search-wrap">
+      <input class="search-input" id="inp2" type="text"
+        placeholder="טיקר שני — לדוגמה MSFT..."
+        autocomplete="off" spellcheck="false" />
+      <div class="autocomplete-list" id="acList2"></div>
+    </div>
+  </div>
+
+  <!-- Compare layout (two columns) -->
+  <div class="compare-layout" id="compareLayout">
+    <div class="compare-col">
+      <div class="compare-col-label" id="compareLabel1"></div>
+      <div id="compareCard1"></div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-col-label" id="compareLabel2"></div>
+      <div id="compareCard2"></div>
+    </div>
   </div>
 
 </div>
@@ -218,33 +256,19 @@
     <button class="modal-close" id="modalClose">✕</button>
     <div class="modal-title">איך מחושב הציון?</div>
     <div class="modal-sub">הציון נע בין 0 ל-5. כל קריטריון שמתקיים מוסיף נקודה אחת.</div>
-    <div class="modal-criterion">
-      <span class="modal-point">+1</span>
-      <div><div class="modal-crit-text">צמיחת הכנסות 5Y חיובית</div><div class="modal-crit-desc">CAGR של ההכנסות בחמש השנים האחרונות גדול מ-0%</div></div>
-    </div>
-    <div class="modal-criterion">
-      <span class="modal-point">+1</span>
-      <div><div class="modal-crit-text">צמיחת רווח 5Y חיובית</div><div class="modal-crit-desc">CAGR של הרווח הנקי בחמש השנים האחרונות גדול מ-0%</div></div>
-    </div>
-    <div class="modal-criterion">
-      <span class="modal-point">+1</span>
-      <div><div class="modal-crit-text">תשואה כוללת 5Y חיובית</div><div class="modal-crit-desc">תשואת המניה כולל דיבידנדים בחמש שנים האחרונות גדולה מ-0%</div></div>
-    </div>
-    <div class="modal-criterion">
-      <span class="modal-point">+1</span>
-      <div><div class="modal-crit-text">מרחק מהשיא ≤ 20%-</div><div class="modal-crit-desc">המניה ירדה לפחות 20% מהשיא של 52 שבועות — אזור פוטנציאלי לכניסה</div></div>
-    </div>
-    <div class="modal-criterion">
-      <span class="modal-point">+1</span>
-      <div><div class="modal-crit-text">תשואת דיבידנד ≥ 2%</div><div class="modal-crit-desc">המניה מחלקת דיבידנד שנתי של לפחות 2% ממחיר המניה</div></div>
-    </div>
+    <div class="modal-criterion"><span class="modal-point">+1</span><div><div class="modal-crit-text">צמיחת הכנסות 5Y חיובית</div><div class="modal-crit-desc">CAGR של ההכנסות בחמש השנים האחרונות גדול מ-0%</div></div></div>
+    <div class="modal-criterion"><span class="modal-point">+1</span><div><div class="modal-crit-text">צמיחת רווח 5Y חיובית</div><div class="modal-crit-desc">CAGR של הרווח הנקי בחמש השנים האחרונות גדול מ-0%</div></div></div>
+    <div class="modal-criterion"><span class="modal-point">+1</span><div><div class="modal-crit-text">תשואה כוללת 5Y חיובית</div><div class="modal-crit-desc">תשואת המניה כולל דיבידנדים בחמש שנים האחרונות גדולה מ-0%</div></div></div>
+    <div class="modal-criterion"><span class="modal-point">+1</span><div><div class="modal-crit-text">מרחק מהשיא ≤ 20%-</div><div class="modal-crit-desc">המניה ירדה לפחות 20% מהשיא של 52 שבועות — אזור פוטנציאלי לכניסה</div></div></div>
+    <div class="modal-criterion"><span class="modal-point">+1</span><div><div class="modal-crit-text">תשואת דיבידנד ≥ 2%</div><div class="modal-crit-desc">המניה מחלקת דיבידנד שנתי של לפחות 2% ממחיר המניה</div></div></div>
   </div>
 </div>
 
 <script>
 var db = {};
 var tickers = [];
-var acActive = -1;
+var acActive = -1, acActive2 = -1;
+var currentTicker1 = null;
 
 // ── Load data ──
 fetch('sp500_snapshot.json')
@@ -261,57 +285,37 @@ fetch('sp500_snapshot.json')
     renderTop10(arr);
   })
   .catch(function(){
-    document.getElementById('fst').innerHTML =
-      '⚠️ לא נמצא קובץ נתונים — הרץ תחילה <b>scan_sp500_final.py</b>';
+    document.getElementById('fst').innerHTML = '⚠️ לא נמצא קובץ נתונים — הרץ תחילה <b>scan_sp500_final.py</b>';
   });
 
 // ── Top 10 ──
 function renderTop10(arr) {
   var sorted = arr.slice().sort(function(a,b){
     var sd = (parseInt(b.score)||0) - (parseInt(a.score)||0);
-    if(sd !== 0) return sd;
-    // tiebreak: 1Y return
-    var a1 = parseFloat(a.total_return_1y_pct)||0;
-    var b1 = parseFloat(b.total_return_1y_pct)||0;
-    return b1 - a1;
-  }).slice(0, 10);
-
+    if(sd!==0) return sd;
+    return (parseFloat(b.total_return_1y_pct)||0) - (parseFloat(a.total_return_1y_pct)||0);
+  }).slice(0,10);
   var ranks = ['🥇','🥈','🥉'];
   var html = '';
-  sorted.forEach(function(s, i){
-    var score = parseInt(s.score)||0;
-    var ret1y = s.total_return_1y_pct;
-    var retDisplay = '—';
-    var retClass = 'na';
-    if(ret1y !== null && ret1y !== undefined && !isNaN(parseFloat(ret1y))){
-      var n = parseFloat(ret1y);
-      retDisplay = (n>=0?'+':'')+n.toFixed(1)+'%';
-      retClass = n>0?'pos':n<0?'neg':'na';
-    }
-    var dots = '';
-    for(var d=0;d<5;d++){
-      var on=d<score, hi=on&&score>=4;
-      dots+='<div class="top10-dot'+(on?' on':'')+(hi?' hi':'')+'"></div>';
-    }
-    var rankLabel = i < 3 ? ranks[i] : (i+1)+'';
-    var rankClass = i===0?'gold-rank':i===1?'silver-rank':i===2?'bronze-rank':'';
-    html +=
-      '<div class="top10-row" data-ticker="'+s.ticker+'">' +
-        '<span class="top10-rank '+rankClass+'">'+rankLabel+'</span>' +
-        '<span class="top10-ticker">'+s.ticker+'</span>' +
-        '<span class="top10-company">'+(s.company||'')+'</span>' +
-        '<div class="top10-score">'+dots+'</div>' +
-        '<span class="top10-1y '+retClass+'">'+retDisplay+'</span>' +
+  sorted.forEach(function(s,i){
+    var score=parseInt(s.score)||0;
+    var n=parseFloat(s.total_return_1y_pct);
+    var retDisplay = isNaN(n)?'—':(n>=0?'+':'')+n.toFixed(1)+'%';
+    var retClass = isNaN(n)?'na':n>0?'pos':n<0?'neg':'na';
+    var dots=''; for(var d=0;d<5;d++){ var on=d<score,hi=on&&score>=4; dots+='<div class="top10-dot'+(on?' on':'')+(hi?' hi':'')+'"></div>'; }
+    html += '<div class="top10-row" data-ticker="'+s.ticker+'">'+
+      '<span class="top10-rank">'+(i<3?ranks[i]:(i+1)+'')+'</span>'+
+      '<span class="top10-ticker">'+s.ticker+'</span>'+
+      '<span class="top10-company">'+(s.company||'')+'</span>'+
+      '<div class="top10-score">'+dots+'</div>'+
+      '<span class="top10-1y '+retClass+'">'+retDisplay+'</span>'+
       '</div>';
   });
-
   document.getElementById('top10List').innerHTML = html;
   document.getElementById('top10Wrap').style.display = 'block';
-
   document.querySelectorAll('.top10-row').forEach(function(el){
     el.addEventListener('click', function(){
-      var ticker = el.getAttribute('data-ticker');
-      document.getElementById('inp').value = ticker;
+      document.getElementById('inp').value = el.getAttribute('data-ticker');
       go();
     });
   });
@@ -319,84 +323,134 @@ function renderTop10(arr) {
 
 // ── Logo → reset ──
 document.getElementById('logoBtn').addEventListener('click', function(){
-  document.getElementById('inp').value = '';
-  hide('res'); hide('emp'); hide('ld');
-  closeAC();
-  document.getElementById('hdr').classList.remove('compact');
-  document.getElementById('top10Wrap').style.display = 'block';
+  resetAll();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// ── Autocomplete ──
+function resetAll(){
+  document.getElementById('inp').value = '';
+  document.getElementById('inp2').value = '';
+  hide('res'); hide('emp'); hide('ld');
+  document.getElementById('compareBtn').style.display = 'none';
+  hide('compareSearchWrap');
+  document.getElementById('compareLayout').classList.remove('active');
+  closeAC(); closeAC2();
+  document.getElementById('hdr').classList.remove('compact');
+  document.getElementById('top10Wrap').style.display = 'block';
+  currentTicker1 = null;
+}
+
+// ── Compare button ──
+document.getElementById('compareBtn').addEventListener('click', function(){
+  hide('res');
+  document.getElementById('compareBtn').style.display = 'none';
+  document.getElementById('compareSearchWrap').style.display = 'block';
+  // put ticker1 in compare col 1
+  if(currentTicker1){
+    var s = db[currentTicker1];
+    if(s){
+      document.getElementById('compareLabel1').textContent = currentTicker1;
+      document.getElementById('compareCard1').innerHTML = buildCard(s);
+      document.getElementById('compareLayout').classList.add('active');
+    }
+  }
+  document.getElementById('inp2').focus();
+});
+
+// ── Main search ──
 var inp = document.getElementById('inp');
 var acList = document.getElementById('acList');
 
 inp.addEventListener('input', function(){
-  var q = inp.value.trim().toUpperCase();
-  acActive = -1;
+  var q = inp.value.trim().toUpperCase(); acActive = -1;
   if(!q){ closeAC(); return; }
+  showAC(q, acList, function(ticker){ inp.value=ticker; closeAC(); go(); });
+});
+inp.addEventListener('keydown', function(e){ handleKey(e, inp, acList, acActive, function(v){ acActive=v; }, go, closeAC); });
+document.addEventListener('click', function(e){ if(!e.target.closest('.search-wrap')) { closeAC(); closeAC2(); } });
+
+// ── Compare search ──
+var inp2 = document.getElementById('inp2');
+var acList2 = document.getElementById('acList2');
+
+inp2.addEventListener('input', function(){
+  var q = inp2.value.trim().toUpperCase(); acActive2 = -1;
+  if(!q){ closeAC2(); return; }
+  showAC(q, acList2, function(ticker){ inp2.value=ticker; closeAC2(); go2(); });
+});
+inp2.addEventListener('keydown', function(e){ handleKey(e, inp2, acList2, acActive2, function(v){ acActive2=v; }, go2, closeAC2); });
+
+function showAC(q, listEl, onSelect){
   var matches = tickers.filter(function(t){ return t.ticker.startsWith(q); }).slice(0,7);
-  if(!matches.length){ closeAC(); return; }
-  var html = '';
+  if(!matches.length){ listEl.style.display='none'; listEl.innerHTML=''; return; }
+  var html='';
   matches.forEach(function(t,i){
-    html += '<div class="ac-item" data-ticker="'+t.ticker+'" data-idx="'+i+'">' +
-      '<span class="ac-ticker">'+t.ticker+'</span>' +
-      '<span class="ac-company">'+t.company+'</span>' +
-    '</div>';
-    if(i<matches.length-1) html += '<div class="ac-sep"></div>';
+    html+='<div class="ac-item" data-ticker="'+t.ticker+'"><span class="ac-ticker">'+t.ticker+'</span><span class="ac-company">'+t.company+'</span></div>';
+    if(i<matches.length-1) html+='<div class="ac-sep"></div>';
   });
-  acList.innerHTML = html;
-  acList.style.display = 'block';
-  acList.querySelectorAll('.ac-item').forEach(function(el){
-    el.addEventListener('mousedown', function(e){
-      e.preventDefault();
-      inp.value = el.getAttribute('data-ticker');
-      closeAC(); go();
-    });
+  listEl.innerHTML=html; listEl.style.display='block';
+  listEl.querySelectorAll('.ac-item').forEach(function(el){
+    el.addEventListener('mousedown', function(e){ e.preventDefault(); onSelect(el.getAttribute('data-ticker')); });
   });
-});
-
-inp.addEventListener('keydown', function(e){
-  var items = acList.querySelectorAll('.ac-item');
-  if(e.key==='ArrowDown'){ e.preventDefault(); acActive=Math.min(acActive+1,items.length-1); updateAC(items); }
-  else if(e.key==='ArrowUp'){ e.preventDefault(); acActive=Math.max(acActive-1,-1); updateAC(items); }
-  else if(e.key==='Enter'){
-    if(acActive>=0&&items[acActive]){ inp.value=items[acActive].getAttribute('data-ticker'); closeAC(); }
-    go();
-  } else if(e.key==='Escape'){ closeAC(); }
-});
-
-function updateAC(items){
-  items.forEach(function(el,i){ el.classList.toggle('active',i===acActive); });
-  if(acActive>=0&&items[acActive]) inp.value=items[acActive].getAttribute('data-ticker');
 }
-document.addEventListener('click', function(e){ if(!e.target.closest('.search-wrap')) closeAC(); });
+
+function handleKey(e, inputEl, listEl, activeIdx, setActive, onEnter, onClose){
+  var items = listEl.querySelectorAll('.ac-item');
+  if(e.key==='ArrowDown'){ e.preventDefault(); activeIdx=Math.min(activeIdx+1,items.length-1); setActive(activeIdx); updateACItems(items,activeIdx,inputEl); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); activeIdx=Math.max(activeIdx-1,-1); setActive(activeIdx); updateACItems(items,activeIdx,inputEl); }
+  else if(e.key==='Enter'){ if(activeIdx>=0&&items[activeIdx]){ inputEl.value=items[activeIdx].getAttribute('data-ticker'); onClose(); } onEnter(); }
+  else if(e.key==='Escape'){ onClose(); }
+}
+function updateACItems(items,activeIdx,inputEl){
+  items.forEach(function(el,i){ el.classList.toggle('active',i===activeIdx); });
+  if(activeIdx>=0&&items[activeIdx]) inputEl.value=items[activeIdx].getAttribute('data-ticker');
+}
 function closeAC(){ acList.style.display='none'; acList.innerHTML=''; acActive=-1; }
+function closeAC2(){ acList2.style.display='none'; acList2.innerHTML=''; acActive2=-1; }
 
 // ── Score Modal ──
 document.addEventListener('click', function(e){
   if(e.target.closest('.score-bar')) document.getElementById('modalOverlay').classList.add('open');
 });
-document.getElementById('modalClose').addEventListener('click', function(){
-  document.getElementById('modalOverlay').classList.remove('open');
-});
-document.getElementById('modalOverlay').addEventListener('click', function(e){
-  if(e.target===this) this.classList.remove('open');
-});
+document.getElementById('modalClose').addEventListener('click', function(){ document.getElementById('modalOverlay').classList.remove('open'); });
+document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
-// ── Search ──
+// ── Search functions ──
 function go(){
   var q = inp.value.trim().toUpperCase();
   if(!q) return;
-  hide('res'); hide('emp');
-  hide('top10Wrap');
+  // reset compare
+  hide('compareSearchWrap');
+  document.getElementById('compareLayout').classList.remove('active');
+  document.getElementById('compareBtn').style.display = 'none';
+  hide('emp'); hide('top10Wrap');
   show('ld');
   document.getElementById('hdr').classList.add('compact');
   setTimeout(function(){
     hide('ld');
     var s = db[q];
-    if(s) render(s); else show('emp');
+    if(s){
+      currentTicker1 = q;
+      document.getElementById('res').innerHTML = buildCard(s);
+      show('res');
+      document.getElementById('compareBtn').style.display = 'flex';
+    } else {
+      show('emp');
+    }
   }, 320);
+}
+
+function go2(){
+  var q = inp2.value.trim().toUpperCase();
+  if(!q) return;
+  var s = db[q];
+  if(!s){ return; }
+  document.getElementById('compareLabel1').textContent = currentTicker1;
+  document.getElementById('compareLabel2').textContent = q;
+  document.getElementById('compareCard1').innerHTML = buildCard(db[currentTicker1]);
+  document.getElementById('compareCard2').innerHTML = buildCard(s);
+  hide('compareSearchWrap');
+  document.getElementById('compareLayout').classList.add('active');
 }
 
 function show(id){ document.getElementById(id).style.display='block'; }
@@ -410,51 +464,41 @@ function mrow(label,val,cls){
   return '<div class="mrow"><span class="mlabel">'+label+'</span>'+disp+'</div>';
 }
 
-function render(s){
+function buildCard(s){
   var score=parseInt(s.score)||0;
-  var dots='';
-  for(var i=0;i<5;i++){ var on=i<score,hi=on&&score>=4; dots+='<div class="dot'+(on?' on':'')+(hi?' hi':'')+'"></div>'; }
+  var dots=''; for(var i=0;i<5;i++){ var on=i<score,hi=on&&score>=4; dots+='<div class="dot'+(on?' on':'')+(hi?' hi':'')+'"></div>'; }
   var price = s.current_price ? '$'+parseFloat(s.current_price).toFixed(2) : '—';
-
-  var html =
-    '<div class="card">' +
-      '<div class="card-top">' +
-        '<div>' +
-          '<div class="ticker-sym">'+s.ticker+'</div>' +
-          '<div class="company-name">'+(s.company||'')+'</div>' +
-          '<span class="sector-pill">'+(s.sector||'')+'</span>' +
-        '</div>' +
-        '<div class="price-block"><div class="price-val">'+price+'</div><div class="price-label">מחיר נוכחי</div></div>' +
-      '</div>' +
-      '<div class="score-bar" title="לחץ להסבר">' +
-        '<span class="score-label">ציון <span class="score-info-icon">ⓘ</span></span>' +
-        '<div class="dots">'+dots+'</div>' +
-        '<span class="score-num">'+score+' / 5</span>' +
-      '</div>' +
-      '<div class="section-head">צמיחה ותשואות</div>' +
-      mrow('צמיחת הכנסות 5Y', fp(s.revenue_growth_5y_pct), pc(s.revenue_growth_5y_pct)) +
-      mrow('צמיחת רווח 5Y',   fp(s.profit_growth_5y_pct),  pc(s.profit_growth_5y_pct)) +
-      mrow('תשואה כוללת 5Y',  fp(s.total_return_5y_pct),   pc(s.total_return_5y_pct)) +
-      mrow('תשואה כוללת 1Y',  fp(s.total_return_1y_pct),   pc(s.total_return_1y_pct)) +
-      mrow('מרחק מהשיא (52W)', fp(s.distance_from_ath_pct), pc(s.distance_from_ath_pct,true)) +
-      '<div class="divider"></div>' +
-      '<div class="section-head">שווי</div>' +
-      mrow('Trailing P/E', fn(s.trailing_pe,'',1), '') +
-      mrow('Forward P/E',  fn(s.forward_pe,'',1),  '') +
-      '<div class="divider"></div>' +
-      '<div class="section-head">דיבידנד</div>' +
-      mrow('תשואת דיבידנד', fn(s.dividend_yield_pct,'%',2), parseFloat(s.dividend_yield_pct)>=2?'pos':'') +
-      mrow('Payout Ratio',  fn(s.payout_ratio_pct,'%',1), '') +
-      (s.next_earnings_date ?
-        '<div class="divider"></div>' +
-        '<div class="mrow"><span class="mlabel">תאריך דוח הבא</span><span class="earnings-val">'+s.next_earnings_date+'</span></div>'
-        : '') +
-    '</div>' +
-    '<div class="scanned-at">נתונים מתאריך '+(s.scanned_at||'לא ידוע')+'</div>';
-
-  var el = document.getElementById('res');
-  el.innerHTML = html;
-  el.style.display = 'block';
+  return '<div class="card">'+
+    '<div class="card-top">'+
+      '<div>'+
+        '<div class="ticker-sym">'+s.ticker+'</div>'+
+        '<div class="company-name">'+(s.company||'')+'</div>'+
+        '<span class="sector-pill">'+(s.sector||'')+'</span>'+
+      '</div>'+
+      '<div class="price-block"><div class="price-val">'+price+'</div><div class="price-label">מחיר נוכחי</div></div>'+
+    '</div>'+
+    '<div class="score-bar">'+
+      '<span class="score-label">ציון <span class="score-info-icon">ⓘ</span></span>'+
+      '<div class="dots">'+dots+'</div>'+
+      '<span class="score-num">'+score+' / 5</span>'+
+    '</div>'+
+    '<div class="section-head">צמיחה ותשואות</div>'+
+    mrow('הכנסות 5Y', fp(s.revenue_growth_5y_pct), pc(s.revenue_growth_5y_pct))+
+    mrow('רווח 5Y',   fp(s.profit_growth_5y_pct),  pc(s.profit_growth_5y_pct))+
+    mrow('תשואה 5Y',  fp(s.total_return_5y_pct),   pc(s.total_return_5y_pct))+
+    mrow('תשואה 1Y',  fp(s.total_return_1y_pct),   pc(s.total_return_1y_pct))+
+    mrow('מרחק שיא',  fp(s.distance_from_ath_pct), pc(s.distance_from_ath_pct,true))+
+    '<div class="divider"></div>'+
+    '<div class="section-head">שווי</div>'+
+    mrow('Trailing P/E', fn(s.trailing_pe,'',1), '')+
+    mrow('Forward P/E',  fn(s.forward_pe,'',1),  '')+
+    '<div class="divider"></div>'+
+    '<div class="section-head">דיבידנד</div>'+
+    mrow('תשואת דיב׳', fn(s.dividend_yield_pct,'%',2), parseFloat(s.dividend_yield_pct)>=2?'pos':'')+
+    mrow('Payout',      fn(s.payout_ratio_pct,'%',1), '')+
+    (s.next_earnings_date ? '<div class="divider"></div><div class="mrow"><span class="mlabel">דוח הבא</span><span class="earnings-val">'+s.next_earnings_date+'</span></div>' : '')+
+  '</div>'+
+  '<div class="scanned-at">עודכן: '+(s.scanned_at||'לא ידוע')+'</div>';
 }
 </script>
 </body>
