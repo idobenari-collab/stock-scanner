@@ -191,6 +191,42 @@
   .analyst-count { font-size: 0.76rem; color: var(--text3); margin-right: 6px; }
   .scanned-at { text-align: center; font-size: 0.72rem; color: var(--text3); margin-top: 8px; margin-bottom: 4px; }
 
+  /* ── Chart ── */
+  .chart-wrap {
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 20px; box-shadow: var(--shadow);
+    overflow: hidden; margin-bottom: 12px;
+  }
+  .chart-header {
+    padding: 14px 20px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .chart-title { font-size: 0.72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .chart-ranges { display: flex; gap: 4px; }
+  .chart-range-btn {
+    font-size: 0.75rem; font-weight: 600; font-family: 'Nunito', sans-serif;
+    color: var(--text2); background: none; border: none;
+    padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: all 0.12s;
+  }
+  .chart-range-btn:hover { background: var(--accent-light); color: var(--accent); }
+  .chart-range-btn.active { background: var(--accent); color: var(--white); }
+  .chart-container { padding: 0; height: 280px; }
+  .chart-container iframe { width: 100%; height: 100%; border: none; display: block; }
+
+  /* ── News ── */
+  .news-wrap {
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 20px; box-shadow: var(--shadow);
+    overflow: hidden; margin-bottom: 12px;
+  }
+  .news-header { padding: 14px 20px 6px; font-size: 0.72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .news-item { padding: 12px 20px; border-top: 1px solid var(--border); cursor: pointer; transition: background 0.12s; text-decoration: none; display: block; }
+  .news-item:hover { background: var(--accent-light); }
+  .news-item-title { font-size: 0.88rem; font-weight: 600; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+  .news-item-meta { font-size: 0.74rem; color: var(--text3); }
+  .news-loading { padding: 20px; text-align: center; font-size: 0.82rem; color: var(--text3); }
+  .news-error { padding: 16px 20px; font-size: 0.82rem; color: var(--text3); }
+
   /* ── Score Modal ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
@@ -253,6 +289,27 @@
 
   <!-- Single result -->
   <div class="result" id="res"></div>
+
+  <!-- Chart -->
+  <div class="chart-wrap" id="chartWrap" style="display:none">
+    <div class="chart-header">
+      <span class="chart-title">גרף מחיר</span>
+      <div class="chart-ranges">
+        <button class="chart-range-btn" data-range="1D">1D</button>
+        <button class="chart-range-btn active" data-range="1M">1M</button>
+        <button class="chart-range-btn" data-range="6M">6M</button>
+        <button class="chart-range-btn" data-range="1Y">1Y</button>
+        <button class="chart-range-btn" data-range="5Y">5Y</button>
+      </div>
+    </div>
+    <div class="chart-container" id="chartContainer"></div>
+  </div>
+
+  <!-- News -->
+  <div class="news-wrap" id="newsWrap" style="display:none">
+    <div class="news-header">📰 חדשות אחרונות</div>
+    <div id="newsList"><div class="news-loading">טוען חדשות...</div></div>
+  </div>
 
   <!-- Compare button (appears after single result) -->
   <button class="compare-btn" id="compareBtn">⇄ &nbsp;השווה למניה אחרת</button>
@@ -409,6 +466,7 @@ function resetAll(){
   document.getElementById('inp').value = '';
   document.getElementById('inp2').value = '';
   hide('res'); hide('emp'); hide('ld');
+  hide('chartWrap'); hide('newsWrap');
   document.getElementById('compareBtn').style.display = 'none';
   hide('compareSearchWrap');
   document.getElementById('compareLayout').classList.remove('active');
@@ -495,6 +553,60 @@ document.addEventListener('click', function(e){
 document.getElementById('modalClose').addEventListener('click', function(){ document.getElementById('modalOverlay').classList.remove('open'); });
 document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
+// ── Chart ──
+var currentChartTicker = null;
+var chartRangeMap = {
+  '1D': '1d', '1M': '1mo', '6M': '6mo', '1Y': '12mo', '5Y': '60mo'
+};
+var tvIntervalMap = {
+  '1D': '15', '1M': 'D', '6M': 'W', '1Y': 'W', '5Y': 'M'
+};
+
+document.querySelectorAll('.chart-range-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.chart-range-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    if(currentChartTicker) renderChart(currentChartTicker, btn.getAttribute('data-range'));
+  });
+});
+
+function renderChart(ticker, range) {
+  currentChartTicker = ticker;
+  var interval = tvIntervalMap[range] || 'D';
+  var html = '<iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol='+ticker+'&interval='+interval+'&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=f9f9f7&studies=[]&theme=light&style=3&timezone=Etc%2FUTC&withdateranges=0&showpopupbutton=0&locale=he&colorTheme=light" allowtransparency="true" scrolling="no"></iframe>';
+  document.getElementById('chartContainer').innerHTML = html;
+  document.getElementById('chartWrap').style.display = 'block';
+}
+
+// ── News (Yahoo Finance RSS via rss2json) ──
+function loadNews(ticker) {
+  document.getElementById('newsWrap').style.display = 'block';
+  document.getElementById('newsList').innerHTML = '<div class="news-loading">טוען חדשות...</div>';
+  var rssUrl = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s='+ticker+'&region=US&lang=en-US';
+  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&count=6';
+  fetch(apiUrl)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(!data.items || !data.items.length){
+        document.getElementById('newsList').innerHTML = '<div class="news-error">לא נמצאו חדשות</div>';
+        return;
+      }
+      var html = '';
+      data.items.forEach(function(item){
+        var date = item.pubDate ? new Date(item.pubDate).toLocaleDateString('he-IL') : '';
+        var source = item.author || '';
+        html += '<a class="news-item" href="'+item.link+'" target="_blank" rel="noopener">'+
+          '<div class="news-item-title">'+item.title+'</div>'+
+          '<div class="news-item-meta">'+(source?source+' · ':'')+date+'</div>'+
+        '</a>';
+      });
+      document.getElementById('newsList').innerHTML = html;
+    })
+    .catch(function(){
+      document.getElementById('newsList').innerHTML = '<div class="news-error">לא ניתן לטעון חדשות כרגע</div>';
+    });
+}
+
 // ── Search functions ──
 function go(){
   var q = inp.value.trim().toUpperCase();
@@ -503,7 +615,7 @@ function go(){
   hide('compareSearchWrap');
   document.getElementById('compareLayout').classList.remove('active');
   document.getElementById('compareBtn').style.display = 'none';
-  hide('emp'); hide('top10Wrap'); hide('weeklyWrap');
+  hide('emp'); hide('top10Wrap'); hide('weeklyWrap'); hide('chartWrap'); hide('newsWrap');
   show('ld');
   document.getElementById('hdr').classList.add('compact');
   setTimeout(function(){
@@ -514,6 +626,10 @@ function go(){
       document.getElementById('res').innerHTML = buildCard(s);
       show('res');
       document.getElementById('compareBtn').style.display = 'flex';
+      // active range button
+      var activeRange = document.querySelector('.chart-range-btn.active');
+      renderChart(q, activeRange ? activeRange.getAttribute('data-range') : '1M');
+      loadNews(q);
     } else {
       show('emp');
     }
