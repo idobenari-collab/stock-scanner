@@ -188,6 +188,7 @@
   .mval.na { color: var(--text3); font-weight: 400; background: none; padding: 2px 0; }
   .divider { height: 1px; background: var(--border); margin: 4px 20px; }
   .earnings-val { font-size: 0.82rem; font-weight: 600; color: var(--accent); }
+  .analyst-count { font-size: 0.76rem; color: var(--text3); margin-right: 6px; }
   .scanned-at { text-align: center; font-size: 0.72rem; color: var(--text3); margin-top: 8px; margin-bottom: 4px; }
 
   /* ── Score Modal ── */
@@ -538,6 +539,26 @@ function hide(id){ document.getElementById(id).style.display='none'; }
 function fp(v,d){ d=d||1; if(v===null||v===undefined||v===''||isNaN(parseFloat(v))) return null; var n=parseFloat(v); return (n>=0?'+':'')+n.toFixed(d)+'%'; }
 function fn(v,suf,d){ suf=suf||''; d=d!==undefined?d:1; if(v===null||v===undefined||v===''||isNaN(parseFloat(v))) return null; return parseFloat(v).toFixed(d)+suf; }
 function pc(v,inv){ if(v===null||v===undefined||isNaN(parseFloat(v))) return 'na'; var n=parseFloat(v); if(inv) return n<=-20?'pos':n<0?'gold':'neg'; return n>0?'pos':n<0?'neg':'na'; }
+function fmcap(v){
+  if(!v||isNaN(parseFloat(v))) return null;
+  var n = parseFloat(v);
+  if(n >= 1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if(n >= 1e9)  return '$'+(n/1e9).toFixed(1)+'B';
+  if(n >= 1e6)  return '$'+(n/1e6).toFixed(0)+'M';
+  return '$'+n;
+}
+function analystBadge(rec, count){
+  var map = {
+    'strong_buy':  { label: 'Strong Buy',  cls: 'pos' },
+    'buy':         { label: 'Buy',          cls: 'pos' },
+    'hold':        { label: 'Hold',         cls: 'gold' },
+    'underperform':{ label: 'Underperform', cls: 'neg' },
+    'sell':        { label: 'Sell',         cls: 'neg' },
+  };
+  var m = map[rec] || { label: rec, cls: '' };
+  var countStr = count ? ' · '+count+' אנליסטים' : '';
+  return '<span class="mval '+m.cls+'">'+m.label+'</span><span class="analyst-count">'+countStr+'</span>';
+}
 function mrow(label,val,cls){
   var disp = val!==null&&val!==undefined ? '<span class="mval '+(cls||'')+'">'+val+'</span>' : '<span class="mval na">—</span>';
   return '<div class="mrow"><span class="mlabel">'+label+'</span>'+disp+'</div>';
@@ -571,11 +592,16 @@ function buildCard(s){
     '<div class="section-head">שווי</div>'+
     mrow('Trailing P/E', fn(s.trailing_pe,'',1), '')+
     mrow('Forward P/E',  fn(s.forward_pe,'',1),  '')+
+    mrow('P/B Ratio',    fn(s.pb_ratio,'',2),     '')+
+    mrow('Market Cap',   fmcap(s.market_cap),     '')+
     '<div class="divider"></div>'+
     '<div class="section-head">דיבידנד</div>'+
     mrow('תשואת דיב׳', fn(s.dividend_yield_pct,'%',2), parseFloat(s.dividend_yield_pct)>=2?'pos':'')+
     mrow('Payout',      fn(s.payout_ratio_pct,'%',1), '')+
     (s.next_earnings_date ? '<div class="divider"></div><div class="mrow"><span class="mlabel">דוח הבא</span><span class="earnings-val">'+s.next_earnings_date+'</span></div>' : '')+
+    (s.analyst_rec ? '<div class="divider"></div>'+
+    '<div class="section-head">קונצנזוס אנליסטים</div>'+
+    '<div class="mrow"><span class="mlabel">המלצה</span>'+analystBadge(s.analyst_rec, s.analyst_count)+'</div>' : '')+
   '</div>'+
   '<div class="scanned-at">עודכן: '+(s.scanned_at||'לא ידוע')+'</div>';
 }

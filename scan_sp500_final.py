@@ -331,6 +331,10 @@ def fetch_one(sym):
 
     trailing_pe = safe(info.get("trailingPE"))
     forward_pe = safe(info.get("forwardPE"))
+    market_cap = info.get("marketCap")
+    pb_ratio = safe(info.get("priceToBook"))
+    analyst_rec = info.get("recommendationKey", None)
+    analyst_count = info.get("numberOfAnalystOpinions", None)
 
     def hist_ret(period):
         try:
@@ -407,6 +411,10 @@ def fetch_one(sym):
         "dy": dy,
         "pr": pr,
         "ned": ned,
+        "market_cap": market_cap,
+        "pb_ratio": pb_ratio,
+        "analyst_rec": analyst_rec,
+        "analyst_count": analyst_count,
     }
 
 
