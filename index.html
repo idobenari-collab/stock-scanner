@@ -231,6 +231,28 @@
   .news-loading { padding: 20px; text-align: center; font-size: 0.82rem; color: var(--text3); }
   .news-error { padding: 16px 20px; font-size: 0.82rem; color: var(--text3); }
 
+  /* ── Dividend History ── */
+  .divhist-wrap {
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 20px; box-shadow: var(--shadow);
+    overflow: hidden; margin-bottom: 12px;
+    padding-bottom: 16px;
+  }
+  .divhist-header { padding: 14px 20px 10px; font-size: 0.72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .divhist-bars { display: flex; align-items: flex-end; justify-content: center; gap: 10px; padding: 8px 20px 4px; height: 100px; }
+  .divhist-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px; height: 100%; justify-content: flex-end; }
+  .divhist-bar { width: 100%; border-radius: 5px 5px 0 0; background: var(--accent); opacity: 0.85; transition: opacity 0.15s; min-height: 4px; }
+  .divhist-bar:hover { opacity: 1; }
+  .divhist-bar.growing { background: var(--green); }
+  .divhist-bar.shrinking { background: var(--red); }
+  .divhist-val { font-size: 0.7rem; font-weight: 700; color: var(--text2); white-space: nowrap; }
+  .divhist-year { font-size: 0.68rem; color: var(--text3); }
+  .divhist-trend { text-align: center; font-size: 0.8rem; font-weight: 600; padding: 4px 20px 0; }
+  .divhist-trend.up { color: var(--green); }
+  .divhist-trend.down { color: var(--red); }
+  .divhist-trend.flat { color: var(--text2); }
+  .divhist-none { padding: 16px 20px; font-size: 0.82rem; color: var(--text3); text-align: center; }
+
   /* ── Score Modal ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
@@ -313,6 +335,12 @@
   <div class="news-wrap" id="newsWrap" style="display:none">
     <div class="news-header">📰 חדשות אחרונות</div>
     <div id="newsList"><div class="news-loading">טוען חדשות...</div></div>
+  </div>
+
+  <!-- Dividend history -->
+  <div class="divhist-wrap" id="divhistWrap" style="display:none">
+    <div class="divhist-header">💰 היסטוריית דיבידנד שנתי</div>
+    <div id="divhistContent"><div class="news-loading">טוען...</div></div>
   </div>
 
   <!-- Compare button (appears after single result) -->
@@ -470,7 +498,7 @@ function resetAll(){
   document.getElementById('inp').value = '';
   document.getElementById('inp2').value = '';
   hide('res'); hide('emp'); hide('ld');
-  hide('chartWrap'); hide('newsWrap');
+  hide('chartWrap'); hide('newsWrap'); hide('divhistWrap');
   document.getElementById('compareBtn').style.display = 'none';
   hide('compareSearchWrap');
   document.getElementById('compareLayout').classList.remove('active');
@@ -557,6 +585,73 @@ document.addEventListener('click', function(e){
 document.getElementById('modalClose').addEventListener('click', function(){ document.getElementById('modalOverlay').classList.remove('open'); });
 document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
+// ── Dividend History ──
+function loadDividendHistory(ticker) {
+  var wrap = document.getElementById('divhistWrap');
+  var content = document.getElementById('divhistContent');
+  wrap.style.display = 'none';
+
+  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=3mo&range=5y&events=dividends';
+  fetch('https://corsproxy.io/?' + encodeURIComponent(url))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var parsed = data;
+      var events = parsed.chart.result[0].events;
+      if(!events || !events.dividends){
+        // no dividends — hide silently
+        return;
+      }
+      var divs = events.dividends;
+      // aggregate by year
+      var byYear = {};
+      Object.values(divs).forEach(function(d){
+        var yr = new Date(d.date * 1000).getFullYear();
+        byYear[yr] = (byYear[yr]||0) + d.amount;
+      });
+      var years = Object.keys(byYear).sort();
+      // keep last 5 years
+      if(years.length > 5) years = years.slice(years.length - 5);
+      if(years.length < 2){ return; }
+
+      var vals = years.map(function(y){ return byYear[y]; });
+      var maxVal = Math.max.apply(null, vals);
+      var first = vals[0], last = vals[vals.length-1];
+      var totalGrowth = ((last - first) / first * 100).toFixed(1);
+      var growing = last > first * 1.01;
+      var shrinking = last < first * 0.99;
+
+      var barsHtml = '';
+      vals.forEach(function(v, i){
+        var heightPct = maxVal > 0 ? Math.max(8, (v / maxVal) * 100) : 8;
+        var cls = i > 0 ? (v > vals[i-1]*1.005 ? 'growing' : v < vals[i-1]*0.995 ? 'shrinking' : '') : '';
+        barsHtml +=
+          '<div class="divhist-col">'+
+            '<div class="divhist-val">$'+v.toFixed(2)+'</div>'+
+            '<div class="divhist-bar '+cls+'" style="height:'+heightPct+'%"></div>'+
+            '<div class="divhist-year">'+years[i]+'</div>'+
+          '</div>';
+      });
+
+      var trendText, trendCls;
+      if(growing){
+        trendText = '📈 הדיבידנד גדל ב-'+totalGrowth+'% בחמש שנים';
+        trendCls = 'up';
+      } else if(shrinking){
+        trendText = '📉 הדיבידנד קטן ב-'+Math.abs(totalGrowth)+'% בחמש שנים';
+        trendCls = 'down';
+      } else {
+        trendText = '➡️ הדיבידנד יציב';
+        trendCls = 'flat';
+      }
+
+      content.innerHTML =
+        '<div class="divhist-bars">'+barsHtml+'</div>'+
+        '<div class="divhist-trend '+trendCls+'">'+trendText+'</div>';
+      wrap.style.display = 'block';
+    })
+    .catch(function(){ /* silently fail */ });
+}
+
 // ── Live Price ──
 function loadLivePrice(ticker) {
   var priceEl   = document.getElementById('livePrice_'+ticker);
@@ -565,10 +660,10 @@ function loadLivePrice(ticker) {
   if(!priceEl) return;
 
   var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=1d&range=1d&includePrePost=false';
-  fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url))
+  fetch('https://corsproxy.io/?' + encodeURIComponent(url))
     .then(function(r){ return r.json(); })
     .then(function(data){
-      var contents = JSON.parse(data.contents);
+      var contents = data;
       var meta = contents.chart.result[0].meta;
       var livePrice = meta.regularMarketPrice;
       var prevClose = meta.chartPreviousClose || meta.previousClose;
@@ -609,26 +704,29 @@ function renderChart(ticker, range) {
   document.getElementById('chartWrap').style.display = 'block';
 }
 
-// ── News (Yahoo Finance RSS via rss2json) ──
+// ── News (Yahoo Finance RSS via corsproxy) ──
 function loadNews(ticker) {
   document.getElementById('newsWrap').style.display = 'block';
   document.getElementById('newsList').innerHTML = '<div class="news-loading">טוען חדשות...</div>';
   var rssUrl = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s='+ticker+'&region=US&lang=en-US';
-  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&count=6';
-  fetch(apiUrl)
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(!data.items || !data.items.length){
+  fetch('https://corsproxy.io/?' + encodeURIComponent(rssUrl))
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      var parser = new DOMParser();
+      var xml = parser.parseFromString(text, 'text/xml');
+      var items = xml.querySelectorAll('item');
+      if(!items.length){
         document.getElementById('newsList').innerHTML = '<div class="news-error">לא נמצאו חדשות</div>';
         return;
       }
       var html = '';
-      data.items.forEach(function(item){
-        var date = item.pubDate ? new Date(item.pubDate).toLocaleDateString('he-IL') : '';
-        var source = item.author || '';
-        html += '<a class="news-item" href="'+item.link+'" target="_blank" rel="noopener">'+
-          '<div class="news-item-title">'+item.title+'</div>'+
-          '<div class="news-item-meta">'+(source?source+' · ':'')+date+'</div>'+
+      Array.from(items).slice(0,6).forEach(function(item){
+        var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
+        var link  = item.querySelector('link')  ? item.querySelector('link').textContent  : '#';
+        var date  = item.querySelector('pubDate') ? new Date(item.querySelector('pubDate').textContent).toLocaleDateString('he-IL') : '';
+        html += '<a class="news-item" href="'+link+'" target="_blank" rel="noopener">'+
+          '<div class="news-item-title">'+title+'</div>'+
+          '<div class="news-item-meta">'+date+'</div>'+
         '</a>';
       });
       document.getElementById('newsList').innerHTML = html;
@@ -646,7 +744,7 @@ function go(){
   hide('compareSearchWrap');
   document.getElementById('compareLayout').classList.remove('active');
   document.getElementById('compareBtn').style.display = 'none';
-  hide('emp'); hide('top10Wrap'); hide('weeklyWrap'); hide('chartWrap'); hide('newsWrap');
+  hide('emp'); hide('top10Wrap'); hide('weeklyWrap'); hide('chartWrap'); hide('newsWrap'); hide('divhistWrap');
   show('ld');
   document.getElementById('hdr').classList.add('compact');
   setTimeout(function(){
@@ -658,6 +756,7 @@ function go(){
       show('res');
       document.getElementById('compareBtn').style.display = 'flex';
       loadLivePrice(q);
+      loadDividendHistory(q);
       // active range button
       var activeRange = document.querySelector('.chart-range-btn.active');
       renderChart(q, activeRange ? activeRange.getAttribute('data-range') : '1M');
@@ -732,7 +831,7 @@ function buildCard(s){
     '<div class="score-bar">'+
       '<span class="score-label">ציון <span class="score-info-icon">ⓘ</span></span>'+
       '<div class="dots">'+dots+'</div>'+
-      '<span class="score-num">'+score+' / 5</span>'+
+      '<span class="score-num" dir="ltr">'+score+' / 5</span>'+
     '</div>'+
     '<div class="section-head">צמיחה ותשואות</div>'+
     mrow('הכנסות 5Y', fp(s.revenue_growth_5y_pct), pc(s.revenue_growth_5y_pct))+
