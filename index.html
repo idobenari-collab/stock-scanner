@@ -166,6 +166,10 @@
   .price-block { text-align: left; flex-shrink: 0; }
   .price-val { font-size: 1.5rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
   .price-label { font-size: 0.7rem; color: var(--text2); margin-top: 4px; text-align: left; }
+  .price-change { font-size: 0.82rem; font-weight: 700; margin-top: 3px; text-align: left; }
+  .price-change.pos { color: var(--green); }
+  .price-change.neg { color: var(--red); }
+  .price-loading { color: var(--text3); font-size: 0.75rem; }
 
   .score-bar { padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); background: var(--bg); cursor: pointer; user-select: none; transition: background 0.15s; }
   .score-bar:hover { background: var(--accent-light); }
@@ -553,6 +557,33 @@ document.addEventListener('click', function(e){
 document.getElementById('modalClose').addEventListener('click', function(){ document.getElementById('modalOverlay').classList.remove('open'); });
 document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
+// ── Live Price ──
+function loadLivePrice(ticker) {
+  var priceEl   = document.getElementById('livePrice_'+ticker);
+  var changeEl  = document.getElementById('liveChange_'+ticker);
+  var timeEl    = document.getElementById('priceTime_'+ticker);
+  if(!priceEl) return;
+
+  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=1d&range=1d&includePrePost=false';
+  fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var contents = JSON.parse(data.contents);
+      var meta = contents.chart.result[0].meta;
+      var livePrice = meta.regularMarketPrice;
+      var prevClose = meta.chartPreviousClose || meta.previousClose;
+      if(!livePrice) return;
+      var change = livePrice - prevClose;
+      var changePct = (change / prevClose) * 100;
+      var sign = change >= 0 ? '+' : '';
+      priceEl.textContent = '$' + livePrice.toFixed(2);
+      changeEl.textContent = sign + change.toFixed(2) + ' (' + sign + changePct.toFixed(2) + '%)';
+      changeEl.className = 'price-change ' + (change >= 0 ? 'pos' : 'neg');
+      if(timeEl) timeEl.textContent = 'live · ~20 דק׳ איחור';
+    })
+    .catch(function(){ /* silently fail, keep scanned price */ });
+}
+
 // ── Chart ──
 var currentChartTicker = null;
 var chartRangeMap = {
@@ -626,6 +657,7 @@ function go(){
       document.getElementById('res').innerHTML = buildCard(s);
       show('res');
       document.getElementById('compareBtn').style.display = 'flex';
+      loadLivePrice(q);
       // active range button
       var activeRange = document.querySelector('.chart-range-btn.active');
       renderChart(q, activeRange ? activeRange.getAttribute('data-range') : '1M');
@@ -691,7 +723,11 @@ function buildCard(s){
         '<div class="company-name">'+(s.company||'')+'</div>'+
         '<span class="sector-pill">'+(s.sector||'')+'</span>'+
       '</div>'+
-      '<div class="price-block"><div class="price-val">'+price+'</div><div class="price-label">מחיר נוכחי</div></div>'+
+      '<div class="price-block" id="priceBlock_'+s.ticker+'">'+
+        '<div class="price-val" id="livePrice_'+s.ticker+'">'+price+'</div>'+
+        '<div class="price-change" id="liveChange_'+s.ticker+'"></div>'+
+        '<div class="price-label">מחיר · <span id="priceTime_'+s.ticker+'">סרוק אחרון</span></div>'+
+      '</div>'+
     '</div>'+
     '<div class="score-bar">'+
       '<span class="score-label">ציון <span class="score-info-icon">ⓘ</span></span>'+
