@@ -392,9 +392,10 @@ var acActive = -1, acActive2 = -1;
 var currentTicker1 = null;
 
 // ── Load data ──
-fetch('sp500_snapshot.json')
-  .then(function(r){ if(!r.ok) throw 1; return r.json(); })
+fetch('sp500_snapshot.json?v=' + Date.now())
+  .then(function(r){ return r.json(); })
   .then(function(arr){
+    try {
     arr.forEach(function(r){
       db[r.ticker.toUpperCase()] = r;
       tickers.push({ ticker: r.ticker.toUpperCase(), company: r.company||'' });
@@ -409,6 +410,10 @@ fetch('sp500_snapshot.json')
       .then(function(r2){ if(!r2.ok) throw 1; return r2.json(); })
       .then(function(prev){ renderWeekly(arr, prev); })
       .catch(function(){ /* no prev file yet, skip */ });
+    } catch(e) {
+      document.getElementById('fst').innerHTML = '⚠️ שגיאה: ' + e.message;
+      console.error(e);
+    }
   })
   .catch(function(){
     document.getElementById('fst').innerHTML = '⚠️ לא נמצא קובץ נתונים — הרץ תחילה <b>scan_sp500_final.py</b>';
