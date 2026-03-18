@@ -393,18 +393,18 @@ var currentTicker1 = null;
 
 // ── Load data ──
 fetch('sp500_snapshot.json?v=' + Date.now())
-  .then(function(r){ console.log("fetch ok, status:",r.status,r.ok); return r.json(); })
+  .then(function(r){ return r.json(); })
   .then(function(arr){
     try {
     arr.forEach(function(r){
-      if(!r.ticker) return; db[r.ticker.toUpperCase()] = r;
+      db[r.ticker.toUpperCase()] = r;
       tickers.push({ ticker: r.ticker.toUpperCase(), company: r.company||'' });
     });
-    console.log("forEach done, arr len:", arr.length); var last = arr[0] && arr[0].scanned_at ? arr[0].scanned_at.slice(0,10) : '';
+    var last = arr[0] && arr[0].scanned_at ? arr[0].scanned_at.slice(0,10) : '';
     document.getElementById('fst').innerHTML =
       'נטענו <b>' + arr.length + '</b> מניות' +
       (last ? ' · עודכן: <b>' + last + '</b>' : '');
-    console.log("before renderTop10"); renderTop10(arr); console.log("after renderTop10");
+    renderTop10(arr);
     // load previous snapshot for weekly diff
     fetch('sp500_snapshot_prev.json')
       .then(function(r2){ if(!r2.ok) throw 1; return r2.json(); })
@@ -598,7 +598,7 @@ function loadDividendHistory(ticker) {
 
   var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=3mo&range=5y&events=dividends';
   fetch('https://corsproxy.io/?' + encodeURIComponent(url))
-    .then(function(r){ console.log("fetch ok, status:",r.status,r.ok); return r.json(); })
+    .then(function(r){ return r.json(); })
     .then(function(data){
       var parsed = data;
       var events = parsed.chart.result[0].events;
@@ -666,7 +666,7 @@ function loadLivePrice(ticker) {
 
   var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=1d&range=1d&includePrePost=false';
   fetch('https://corsproxy.io/?' + encodeURIComponent(url))
-    .then(function(r){ console.log("fetch ok, status:",r.status,r.ok); return r.json(); })
+    .then(function(r){ return r.json(); })
     .then(function(data){
       var contents = data;
       var meta = contents.chart.result[0].meta;
