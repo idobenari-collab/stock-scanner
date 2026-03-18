@@ -397,7 +397,7 @@ fetch('sp500_snapshot.json?v=' + Date.now())
   .then(function(arr){
     try {
     arr.forEach(function(r){
-      db[r.ticker.toUpperCase()] = r;
+      if(!r.ticker) return; db[r.ticker.toUpperCase()] = r;
       tickers.push({ ticker: r.ticker.toUpperCase(), company: r.company||'' });
     });
     var last = arr[0] && arr[0].scanned_at ? arr[0].scanned_at.slice(0,10) : '';
