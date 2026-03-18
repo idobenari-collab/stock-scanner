@@ -400,7 +400,7 @@ fetch('sp500_snapshot.json?v=' + Date.now())
       if(!r.ticker) return; db[r.ticker.toUpperCase()] = r;
       tickers.push({ ticker: r.ticker.toUpperCase(), company: r.company||'' });
     });
-    var last = arr[0] && arr[0].scanned_at ? arr[0].scanned_at.slice(0,10) : '';
+    console.log("forEach done, arr len:", arr.length); var last = arr[0] && arr[0].scanned_at ? arr[0].scanned_at.slice(0,10) : '';
     document.getElementById('fst').innerHTML =
       'נטענו <b>' + arr.length + '</b> מניות' +
       (last ? ' · עודכן: <b>' + last + '</b>' : '');
