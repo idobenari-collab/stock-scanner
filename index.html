@@ -410,7 +410,7 @@ fetch('sp500_snapshot.json?v=' + Date.now())
       .then(function(r2){ if(!r2.ok) throw 1; return r2.json(); })
       .then(function(prev){ renderWeekly(arr, prev); })
       .catch(function(){ /* no prev file yet, skip */ });
-    } catch(e) { console.error("INNER CATCH:",e);
+    } catch(e) {
       document.getElementById('fst').innerHTML = '⚠️ שגיאה: ' + e.message;
       console.error(e);
     }
