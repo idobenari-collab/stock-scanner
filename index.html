@@ -404,7 +404,7 @@ fetch('sp500_snapshot.json?v=' + Date.now())
     document.getElementById('fst').innerHTML =
       'נטענו <b>' + arr.length + '</b> מניות' +
       (last ? ' · עודכן: <b>' + last + '</b>' : '');
-    renderTop10(arr);
+    console.log("before renderTop10"); renderTop10(arr); console.log("after renderTop10");
     // load previous snapshot for weekly diff
     fetch('sp500_snapshot_prev.json')
       .then(function(r2){ if(!r2.ok) throw 1; return r2.json(); })
