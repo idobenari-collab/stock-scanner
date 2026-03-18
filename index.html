@@ -393,7 +393,7 @@ var currentTicker1 = null;
 
 // ── Load data ──
 fetch('sp500_snapshot.json?v=' + Date.now())
-  .then(function(r){ return r.json(); })
+  .then(function(r){ console.log("fetch ok, status:",r.status,r.ok); return r.json(); })
   .then(function(arr){
     try {
     arr.forEach(function(r){
@@ -410,7 +410,7 @@ fetch('sp500_snapshot.json?v=' + Date.now())
       .then(function(r2){ if(!r2.ok) throw 1; return r2.json(); })
       .then(function(prev){ renderWeekly(arr, prev); })
       .catch(function(){ /* no prev file yet, skip */ });
-    } catch(e) {
+    } catch(e) { console.error("INNER CATCH:",e);
       document.getElementById('fst').innerHTML = '⚠️ שגיאה: ' + e.message;
       console.error(e);
     }
@@ -598,7 +598,7 @@ function loadDividendHistory(ticker) {
 
   var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=3mo&range=5y&events=dividends';
   fetch('https://corsproxy.io/?' + encodeURIComponent(url))
-    .then(function(r){ return r.json(); })
+    .then(function(r){ console.log("fetch ok, status:",r.status,r.ok); return r.json(); })
     .then(function(data){
       var parsed = data;
       var events = parsed.chart.result[0].events;
@@ -666,7 +666,7 @@ function loadLivePrice(ticker) {
 
   var url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?interval=1d&range=1d&includePrePost=false';
   fetch('https://corsproxy.io/?' + encodeURIComponent(url))
-    .then(function(r){ return r.json(); })
+    .then(function(r){ console.log("fetch ok, status:",r.status,r.ok); return r.json(); })
     .then(function(data){
       var contents = data;
       var meta = contents.chart.result[0].meta;
